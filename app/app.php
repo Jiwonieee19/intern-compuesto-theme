@@ -3,7 +3,24 @@
 defined( 'ABSPATH' ) or exit;
 
 // CONSTANTS
-defined( 'ASSETS_VERSION' ) or define( 'ASSETS_VERSION', md5( filemtime( is_readable( get_theme_file_path( 'dist/main.min.css' ) ) ? get_theme_file_path( 'dist/main.min.css' ) : '' ) . filemtime( is_readable( get_theme_file_path( 'dist/main.min.js' ) ) ? get_theme_file_path( 'dist/main.min.js' ) : '' ) ) );
+if ( ! defined( 'ASSETS_VERSION' ) ) {
+	$_app_dist_dir = wp_normalize_path( get_theme_file_path( 'dist' ) );
+	$_app_mtimes   = [];
+
+	foreach ( [ '/css/*.min.css', '/js/*.min.js', '/main.min.css', '/main.min.js' ] as $_app_pattern ) {
+		foreach ( (array) glob( $_app_dist_dir . $_app_pattern ) as $_app_file ) {
+			$_app_mtime = @filemtime( $_app_file );
+
+			if ( $_app_mtime ) {
+				$_app_mtimes[] = $_app_mtime;
+			}
+		}
+	}
+
+	define( 'ASSETS_VERSION', $_app_mtimes ? md5( implode( '|', $_app_mtimes ) ) : '1.0.0' );
+
+	unset( $_app_dist_dir, $_app_mtimes, $_app_pattern, $_app_file, $_app_mtime );
+}
 defined( 'APP_ALM_NO_RESULTS_TEXT' ) or define( 'APP_ALM_NO_RESULTS_TEXT', 'Sorry, nothing found in this search' );
 
 // AUTOLOAD CORE CLASSES

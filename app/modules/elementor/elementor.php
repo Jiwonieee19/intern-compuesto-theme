@@ -39,6 +39,7 @@ final class Custom_Elementor {
     // Register widgets (class is autoloaded, no need to include)
     Plugin::instance()->widgets_manager->register( new Elem_Header() );
     Plugin::instance()->widgets_manager->register( new Elem_Carousel() );
+    Plugin::instance()->widgets_manager->register( new Elem_Modern_Carousel() );
   }
 
   public function init_dynamic_tags( $dynamic_tags ): void {
